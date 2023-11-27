@@ -37,7 +37,7 @@ def create_initial_solution(
     return solution
 
 
-def calculate_tardienss(solution, process_times, duedates, readytimes, setuptimes):
+def calculate_tardiness(solution, process_times, due_dates, ready_times, setup_times):
     sequence = copy.deepcopy(solution)
     n_machines = len(process_times[0])
     tardiness = np.zeros(len(process_times))
@@ -49,34 +49,77 @@ def calculate_tardienss(solution, process_times, duedates, readytimes, setuptime
         for index, value in enumerate(sequence[i]):
             if index == 0:
                 completion_times[value] = comptime + \
-                    process_times[value][i] + readytimes[value]+45
-                comptime += process_times[value][i] + readytimes[value]+45
+                    process_times[value][i] + ready_times[value]+45
+                comptime += process_times[value][i] + ready_times[value]+45
             else:
 
-                if comptime >= readytimes[value]:
+                if comptime >= ready_times[value]:
                     current_job = value
                     previous_job = sequence[i][index-1]
 
                     completion_times[value] = comptime + \
                         process_times[value][i] + \
-                        setuptimes[previous_job][current_job]
+                        setup_times[previous_job][current_job]
                     comptime += process_times[value][i] + \
-                        setuptimes[previous_job][current_job]
+                        setup_times[previous_job][current_job]
 
                 else:
                     current_job = value
                     previous_job = sequence[i][index-1]
 
-                    completion_times[value] = readytimes[value] + \
+                    completion_times[value] = ready_times[value] + \
                         process_times[value][i] + \
-                        setuptimes[previous_job][current_job]
-                    comptime += process_times[value][i] + setuptimes[previous_job][current_job] + (
-                        readytimes[value]-comptime)
+                        setup_times[previous_job][current_job]
+                    comptime += process_times[value][i] + setup_times[previous_job][current_job] + (
+                        ready_times[value]-comptime)
 
             start_times[value] = completion_times[value] - \
                 process_times[value][i]
 
     for i in range(len(process_times)):
-        tardiness[i] = max(completion_times[i]-duedates[i], 0)
+        tardiness[i] = max(completion_times[i]-due_dates[i], 0)
 
     return tardiness.sum(), sequence, completion_times, start_times
+
+
+def create_neighbor_solution(solution):
+
+    sequence = copy.deepcopy(solution)
+
+    if any(not sub_list for sub_list in sequence):
+
+        max_length_index = max(range(len(sequence)),
+                               key=lambda i: len(sequence[i]))
+
+        empty_index = None
+        for i, sublist in enumerate(sequence):
+            if not sublist:
+                empty_index = i
+                break
+
+        rand = random.randint(0, len(sequence[max_length_index])-1)
+        sequence[empty_index].append(sequence[max_length_index][rand])
+        sequence[max_length_index].pop(rand)
+
+    else:
+
+        m1 = random.randint(0, 2)
+        m2 = random.randint(0, 2)
+        dec = random.random()
+
+        if dec >= 0.5:
+
+            for_m1 = random.randint(0, len(sequence[m1])-1)
+            for_m2 = random.randint(0, len(sequence[m2])-1)
+
+            temp = sequence[m1][for_m1]
+            sequence[m1][for_m1] = sequence[m2][for_m2]
+            sequence[m2][for_m2] = temp
+        else:
+            for_m1 = random.randint(0, len(sequence[m1])-1)
+            for_m2 = random.randint(0, len(sequence[m1])-1)
+
+            element = sequence[m1].pop(for_m1)
+            sequence[m2].append(element)
+
+    return sequence
