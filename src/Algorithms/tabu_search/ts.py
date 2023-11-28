@@ -1,10 +1,10 @@
 import copy
-from src.Algorithms.utils.common import calculate_tardiness, create_neighbor_solution
-
+from src.Algorithms.utils.common import (calculate_tardiness,
+                                         create_neighbor_solution,
+                                         create_initial_solution)
 
 class TabuSearch:
     def __init__(self,
-                 initial_solution,
                  process_times,
                  due_dates,
                  ready_times,
@@ -14,15 +14,23 @@ class TabuSearch:
                  tabu_tenure=50,
                  n_neighbors=50) -> None:
 
-        self.initial_solution = initial_solution
         self.process_times = process_times
         self.due_dates = due_dates
         self.ready_times = ready_times
         self.setup_times = setup_times
+
         self.n_iterations = n_iterations
         self.aspiration = aspiration
         self.tabu_tenure = tabu_tenure
         self.n_neighbors = n_neighbors
+
+    def construct_initial_solution(self):
+        self.initial_solution = create_initial_solution(
+            len(self.process_times.T[0]),
+            len(self.process_times[0]),
+            self.process_times
+
+        )
 
     @staticmethod
     def _create_neighborhood(solution, n_solutions=20):
@@ -147,3 +155,4 @@ class TabuSearch:
                 global_best_solution, self.process_times, self.due_dates, self.ready_times, self.setup_times)
 
             return seq, obj, objectives, compt, stime
+

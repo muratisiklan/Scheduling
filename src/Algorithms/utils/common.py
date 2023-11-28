@@ -19,7 +19,7 @@ def create_initial_solution(
 
     machine_assignment = np.zeros(n_jobs)
 
-    if not process_times:
+    if process_times.any() == None:
         # Assign jobs randomly to machines
         machine_assignment = np.random.randint(0, n_machines, n_jobs)
     else:
