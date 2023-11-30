@@ -2,28 +2,28 @@ import copy
 from src.Problems.pms.Algorithms.utils import (create_initial_solution,
                                                create_neighbor_solution,
                                                calculate_tardiness)
+from src.Problems.pms.pms import ParallelMachineScheduling
 
 
-class TabuSearch:
+class TabuSearch(ParallelMachineScheduling):
     def __init__(self,
-                 process_times,
-                 due_dates,
-                 ready_times,
-                 setup_times,
                  n_iterations=50,
                  aspiration=True,
                  tabu_tenure=50,
-                 n_neighbors=50) -> None:
+                 n_neighbors=50,
+                 **kwargs) -> None:
 
-        self.process_times = process_times
-        self.due_dates = due_dates
-        self.ready_times = ready_times
-        self.setup_times = setup_times
+        super().__init__(**kwargs)
 
-        self.n_iterations = n_iterations
-        self.aspiration = aspiration
-        self.tabu_tenure = tabu_tenure
-        self.n_neighbors = n_neighbors
+        # self.process_times = process_times
+        # self.due_dates = due_dates
+        # self.ready_times = ready_times
+        # self.setup_times = setup_times
+
+        # self.n_iterations = n_iterations
+        # self.aspiration = aspiration
+        # self.tabu_tenure = tabu_tenure
+        # self.n_neighbors = n_neighbors
 
     def construct_initial_solution(self):
         self.initial_solution = create_initial_solution(
@@ -35,18 +35,17 @@ class TabuSearch:
 
     @staticmethod
     def _create_neighborhood(solution, n_solutions=20):
-        init_sol = copy.deepcopy(solution)
-        neighborhood = []
-
-        i = 0
-        while i < n_solutions:
-            neighborhood.append(create_neighbor_solution(init_sol))
-            i += 1
-
+        neighborhood = [create_neighbor_solution(
+            copy.deepcopy(solution)) for _ in range(n_solutions)]
         return neighborhood
 
-    def run(self):
-        if self.aspiration:
+    def solve(self,
+              n_iterations:int = 20,
+              aspiration: bool = True,
+              tabu_tenure: int = 10,
+              n_neighbors: int = 20):
+
+        if aspiration:
 
             global_best_solution = copy.deepcopy(self.initial_solution)
 
@@ -56,10 +55,10 @@ class TabuSearch:
                 best_sol, self.process_times, self.due_dates, self.ready_times, self.setup_times)
             objectives = []
 
-            for i in range(self.n_iterations):
+            for i in range(n_iterations):
 
                 neighbor_set = self._create_neighborhood(
-                    best_sol, self.n_neighbors)
+                    best_sol, n_neighbors)
                 neigh_obj = []
                 for j in range(len(neighbor_set)):
                     neigh_obj.append(calculate_tardiness(
@@ -96,7 +95,7 @@ class TabuSearch:
                 tabuList.append(best_sol)
 
                 # Remove the oldest entry from the tabu list if it has reached its maximum size
-                if len(tabuList) > self.tabu_tenure:
+                if len(tabuList) > tabu_tenure:
                     tabuList.pop(0)
 
                 objectives.append(best_obj)
@@ -115,9 +114,9 @@ class TabuSearch:
             best_sol = copy.deepcopy(self.initial_solution)
             objectives = []
 
-            for i in range(self.n_iterations):
+            for i in range(n_iterations):
                 neighbor_set = self._create_neighborhood(
-                    best_sol, self.n_neighbors)
+                    best_sol, n_neighbors)
                 neigh_obj = []
 
                 for j in range(len(neighbor_set)):
@@ -142,7 +141,7 @@ class TabuSearch:
 
                 tabuList.append(best_sol)
 
-                if len(tabuList) > self.tabu_tenure:
+                if len(tabuList) > tabu_tenure:
                     tabuList.pop(0)
 
                 obj, seq, compt, stime = calculate_tardiness(
@@ -154,5 +153,11 @@ class TabuSearch:
 
             obj, seq, compt, stime = calculate_tardiness(
                 global_best_solution, self.process_times, self.due_dates, self.ready_times, self.setup_times)
+
+            self.final_solution = seq
+            self.final__total_objective_value = obj
+            self.objective_change_iteration = objectives
+            self.final_compt = compt
+            self.final_stime = stime
 
             return seq, obj, objectives, compt, stime
