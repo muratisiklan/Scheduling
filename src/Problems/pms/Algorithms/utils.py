@@ -2,6 +2,8 @@ import random
 import numpy as np
 import copy
 
+# General functions regarding parallel machine scheduling
+
 
 def create_initial_solution(
         n_jobs: int,
@@ -123,3 +125,8 @@ def create_neighbor_solution(solution):
             sequence[m2].append(element)
 
     return sequence
+
+
+
+# For simulated Annealing
+
