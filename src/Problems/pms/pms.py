@@ -16,3 +16,6 @@ class ParallelMachineScheduling(ABC):
     @abstractmethod
     def solve(self):
         pass
+    
+    def random(self):
+        print("it works")

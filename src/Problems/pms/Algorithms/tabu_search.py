@@ -6,26 +6,12 @@ from src.Problems.pms.pms import ParallelMachineScheduling
 
 
 class TabuSearch(ParallelMachineScheduling):
-    def __init__(self,
-                 n_iterations=50,
-                 aspiration=True,
-                 tabu_tenure=50,
-                 n_neighbors=50,
-                 **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
 
         super().__init__(**kwargs)
+        self._construct_initial_solution()
 
-        # self.process_times = process_times
-        # self.due_dates = due_dates
-        # self.ready_times = ready_times
-        # self.setup_times = setup_times
-
-        # self.n_iterations = n_iterations
-        # self.aspiration = aspiration
-        # self.tabu_tenure = tabu_tenure
-        # self.n_neighbors = n_neighbors
-
-    def construct_initial_solution(self):
+    def _construct_initial_solution(self):
         self.initial_solution = create_initial_solution(
             len(self.process_times.T[0]),
             len(self.process_times[0]),
@@ -34,13 +20,13 @@ class TabuSearch(ParallelMachineScheduling):
         )
 
     @staticmethod
-    def _create_neighborhood(solution, n_solutions=20):
+    def _create_neighborhood(solution, n_solutions):
         neighborhood = [create_neighbor_solution(
             copy.deepcopy(solution)) for _ in range(n_solutions)]
         return neighborhood
 
     def solve(self,
-              n_iterations:int = 20,
+              n_iterations: int = 20,
               aspiration: bool = True,
               tabu_tenure: int = 10,
               n_neighbors: int = 20):
