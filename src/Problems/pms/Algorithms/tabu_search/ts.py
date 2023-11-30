@@ -1,7 +1,7 @@
 import copy
-from src.Algorithms.utils.common import (calculate_tardiness,
-                                         create_neighbor_solution,
-                                         create_initial_solution)
+from src.Problems.pms.Algorithms.utils import (create_initial_solution,
+                                               create_neighbor_solution,
+                                               calculate_tardiness)
 
 class TabuSearch:
     def __init__(self,
