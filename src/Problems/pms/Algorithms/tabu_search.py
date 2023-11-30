@@ -3,6 +3,7 @@ from src.Problems.pms.Algorithms.utils import (create_initial_solution,
                                                create_neighbor_solution,
                                                calculate_tardiness)
 
+
 class TabuSearch:
     def __init__(self,
                  process_times,
@@ -155,4 +156,3 @@ class TabuSearch:
                 global_best_solution, self.process_times, self.due_dates, self.ready_times, self.setup_times)
 
             return seq, obj, objectives, compt, stime
-
