@@ -20,7 +20,7 @@ def create_initial_solution(
     solution = [[] for _ in range(n_machines)]
 
     machine_assignment = np.zeros(n_jobs)
-
+    # Check here there is bugs
     if process_times.any() == None:
         # Assign jobs randomly to machines
         machine_assignment = np.random.randint(0, n_machines, n_jobs)
@@ -127,6 +127,14 @@ def create_neighbor_solution(solution):
     return sequence
 
 
+# For Genetic Algorithm
 
-# For simulated Annealing
+def create_population(n_jobs: int, n_machine: int, size=100, process_times: list = None):
+    population = []
 
+    while size > 0:
+        population.append(create_initial_solution(
+            n_jobs, n_machine, process_times))
+        size -= 1
+
+    return population

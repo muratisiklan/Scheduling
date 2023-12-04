@@ -5,10 +5,10 @@ from src.Problems.pms.Algorithms.utils import (create_initial_solution,
 from src.Problems.pms.pms import ParallelMachineScheduling
 
 
-class TabuSearch(ParallelMachineScheduling):
-    def __init__(self, **kwargs) -> None:
 
-        super().__init__(**kwargs)
+class TabuSearch(ParallelMachineScheduling):
+    def __init__(self, process_times, ready_times, due_dates, setup_times) -> None:
+        super().__init__(process_times, ready_times, due_dates, setup_times)
         self._construct_initial_solution()
 
     def _construct_initial_solution(self):
