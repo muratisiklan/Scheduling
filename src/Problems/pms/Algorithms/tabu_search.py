@@ -5,7 +5,6 @@ from src.Problems.pms.Algorithms.utils import (create_initial_solution,
 from src.Problems.pms.pms import ParallelMachineScheduling
 
 
-
 class TabuSearch(ParallelMachineScheduling):
     def __init__(self, process_times, ready_times, due_dates, setup_times) -> None:
         super().__init__(process_times, ready_times, due_dates, setup_times)
@@ -13,10 +12,7 @@ class TabuSearch(ParallelMachineScheduling):
 
     def _construct_initial_solution(self):
         self.initial_solution = create_initial_solution(
-            len(self.process_times.T[0]),
-            len(self.process_times[0]),
             self.process_times
-
         )
 
     @staticmethod

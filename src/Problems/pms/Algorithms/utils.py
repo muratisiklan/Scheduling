@@ -6,9 +6,7 @@ import copy
 
 
 def create_initial_solution(
-        n_jobs: int,
-        n_machines: int,
-        process_times: list = None) -> list:
+        process_times: list) -> list:
     """process times n x m list,
     represents process time of "job n" on "machine m"
 
@@ -16,22 +14,20 @@ def create_initial_solution(
         random solution if process_times doesnt provided
         feasible solution if process_times provided and feasible solution exists.
     """
+    n_jobs = len(process_times)
+    n_machines = len(process_times[0])
 
     solution = [[] for _ in range(n_machines)]
 
     machine_assignment = np.zeros(n_jobs)
-    # Check here there is bugs
-    if process_times.any() == None:
-        # Assign jobs randomly to machines
-        machine_assignment = np.random.randint(0, n_machines, n_jobs)
-    else:
-        # Assign jobs based on process times
-        for i in range(n_jobs):
-            if process_times[i][1] > 10000 and process_times[i][2] > 1000:
-                machine_assignment[i] = np.argmin(process_times[i])
-            else:
-                rand = random.randint(0, n_machines-1)
-                machine_assignment[i] = rand
+
+    # Assign jobs based on process times (maybe some improvements can make)
+    for i in range(n_jobs):
+        if process_times[i][1] > 10000 and process_times[i][2] > 1000:
+            machine_assignment[i] = np.argmin(process_times[i])
+        else:
+            rand = random.randint(0, n_machines-1)
+            machine_assignment[i] = rand
 
     for index, value in enumerate(machine_assignment):
         solution[int(value)].append(index)
@@ -129,12 +125,12 @@ def create_neighbor_solution(solution):
 
 # For Genetic Algorithm
 
-def create_population(n_jobs: int, n_machine: int, size=100, process_times: list = None):
+def create_population(process_times: list, size=100):
+
     population = []
 
     while size > 0:
-        population.append(create_initial_solution(
-            n_jobs, n_machine, process_times))
+        population.append(create_initial_solution(process_times))
         size -= 1
 
     return population

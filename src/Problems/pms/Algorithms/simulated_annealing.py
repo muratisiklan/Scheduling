@@ -14,8 +14,6 @@ class SimulatedAnnealing(ParallelMachineScheduling):
 
     def _construct_initial_solution(self):
         self.initial_solution = create_initial_solution(
-            len(self.process_times.T[0]),
-            len(self.process_times[0]),
             self.process_times
         )
 
