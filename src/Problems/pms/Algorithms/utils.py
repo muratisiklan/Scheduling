@@ -126,7 +126,6 @@ def create_neighbor_solution(solution):
 # For Genetic Algorithm
 
 def create_population(process_times: list, size=100):
-
     population = []
 
     while size > 0:
