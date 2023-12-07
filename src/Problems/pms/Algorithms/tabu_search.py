@@ -22,7 +22,7 @@ class TabuSearch(ParallelMachineScheduling):
         return neighborhood
 
     def solve(self,
-              n_iterations: int = 20,
+              n_iter: int = 20,
               aspiration: bool = True,
               tabu_tenure: int = 10,
               n_neighbors: int = 20):
@@ -37,7 +37,7 @@ class TabuSearch(ParallelMachineScheduling):
                 best_sol, self.process_times, self.due_dates, self.ready_times, self.setup_times)
             objectives = []
 
-            for i in range(n_iterations):
+            for i in range(n_iter):
 
                 neighbor_set = self._create_neighborhood(
                     best_sol, n_neighbors)
@@ -96,7 +96,7 @@ class TabuSearch(ParallelMachineScheduling):
             best_sol = copy.deepcopy(self.initial_solution)
             objectives = []
 
-            for i in range(n_iterations):
+            for i in range(n_iter):
                 neighbor_set = self._create_neighborhood(
                     best_sol, n_neighbors)
                 neigh_obj = []
@@ -137,7 +137,7 @@ class TabuSearch(ParallelMachineScheduling):
                 global_best_solution, self.process_times, self.due_dates, self.ready_times, self.setup_times)
 
             self.final_solution = seq
-            self.final__total_objective_value = obj
+            self.final_total_objective_value = obj
             self.objective_change_iteration = objectives
             self.final_compt = compt
             self.final_stime = stime

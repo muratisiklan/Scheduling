@@ -48,16 +48,16 @@ class SimulatedAnnealing(ParallelMachineScheduling):
                 global_best_solution = copy.deepcopy(incumbent_solution)
 
             temperature *= cooling_factor
-            n_iter -= 1
+            
 
             objectives.append(calculate_tardiness(
                 incumbent_solution, self.process_times, self.due_dates, self.ready_times, self.setup_times)[0])
-
+            n_iter -= 1
         obj, seq, compt, stime = calculate_tardiness(
             global_best_solution, self.process_times, self.due_dates, self.ready_times, self.setup_times)
 
         self.final_solution = seq
-        self.final__total_objective_value = obj
+        self.final_total_objective_value = obj
         self.objective_change_iteration = objectives
         self.final_compt = compt
         self.final_stime = stime

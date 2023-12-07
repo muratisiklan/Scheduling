@@ -127,11 +127,12 @@ def find_value_index(my_list, value):
     for i, sublist in enumerate(my_list):
         if value in sublist:
             j = sublist.index(value)
-            return i, j
-        else:
-            print("value is not inside list!!")            
+            return (i, j)
+      
+    print("value is not inside list!!")
 
 # For Genetic Algorithm
+
 
 def create_population(process_times: list, size=100):
     population = []
