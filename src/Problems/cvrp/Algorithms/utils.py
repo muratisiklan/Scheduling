@@ -1,10 +1,13 @@
+import random
+import copy
+
+
 def calculate_total_cost(solution, distances, demands, vehicle_capacities):
     total_cost = 0
     visited_customers = set()
 
     current_vehicle = 0
     total_loads = []  # Indicates total load of each single vehicles
-
 
     for vehicle_route in solution:
         if not vehicle_route:
@@ -39,4 +42,74 @@ def calculate_total_cost(solution, distances, demands, vehicle_capacities):
 
         current_vehicle += 1
 
-    return total_cost, total_loads
+    return total_cost, total_loads,copy.deepcopy(solution)
+
+
+def create_initial_solution(distances, demands, vehicle_capacities):
+
+    n_nodes = len(distances)
+    n_vehicles = len(vehicle_capacities)
+
+    # list composed of customer nodes
+    customers = list(range(1, n_nodes))
+    random.shuffle(customers)
+
+    solution = [[] for _ in range(n_vehicles)]
+
+    remaining_capacity = vehicle_capacities.copy()
+
+    for customer in customers:
+
+        max_index = remaining_capacity.index(max(remaining_capacity))
+
+        solution[max_index].append(customer)
+        remaining_capacity[max_index] -= demands[customer]
+
+    return solution
+
+
+
+
+
+def create_neighbor_solution(solution):
+    n_nodes = len(solution)
+
+    sequence = copy.deepcopy(solution)
+
+    if any(not sub_list for sub_list in sequence):
+
+        max_length_index = max(range(len(sequence)),
+                               key=lambda i: len(sequence[i]))
+
+        empty_index = None
+        for i, sublist in enumerate(sequence):
+            if not sublist:
+                empty_index = i
+                break
+
+        rand = random.randint(0, len(sequence[max_length_index])-1)
+        sequence[empty_index].append(sequence[max_length_index][rand])
+        sequence[max_length_index].pop(rand)
+
+    else:
+        # modified randoms, debug if necessary
+        m1 = random.randint(0, n_nodes-1)
+        m2 = random.randint(0, n_nodes-1)
+        dec = random.random()
+
+        if dec >= 0.5:
+
+            for_m1 = random.randint(0, len(sequence[m1])-1)
+            for_m2 = random.randint(0, len(sequence[m2])-1)
+
+            temp = sequence[m1][for_m1]
+            sequence[m1][for_m1] = sequence[m2][for_m2]
+            sequence[m2][for_m2] = temp
+        else:
+            for_m1 = random.randint(0, len(sequence[m1])-1)
+            for_m2 = random.randint(0, len(sequence[m1])-1)
+
+            element = sequence[m1].pop(for_m1)
+            sequence[m2].append(element)
+
+    return sequence

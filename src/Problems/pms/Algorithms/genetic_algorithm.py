@@ -19,22 +19,14 @@ class GeneticAlgorithm(ParallelMachineScheduling):
 
         return fitness
 
-    def _selection(self, fitness: list, selection_algorithm: str = "roulette_wheel"):
+    def _selection(self, fitness: list, selection_algorithm: str = None):
         # Roulette wheel selection
-        if selection_algorithm == "roulette_wheel":
-            total_fitness = sum(fitness)
-            selection_probabilities = [
-                1 / (value / total_fitness) for value in fitness]
 
-            # Select two parents' indexes using roulette wheel selection
-            selected_parents_indexes = random.choices(
-                range(len(self.population)), weights=selection_probabilities, k=2)
-
-            return selected_parents_indexes
-        else:
-            sorted_indexes = sorted(
-                range(len(fitness)), key=lambda k: fitness[k])
-            return tuple(sorted_indexes[:2])
+        #select best 2 solutions
+        sorted_indexes = sorted(
+            range(len(fitness)), key=lambda k: fitness[k])
+        return tuple(sorted_indexes[:2])
+     
 
         # Tournament selection
         # Boltzman Selectiong

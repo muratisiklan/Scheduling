@@ -81,6 +81,7 @@ def calculate_tardiness(solution, process_times, due_dates, ready_times, setup_t
 
 
 def create_neighbor_solution(solution):
+    n_machines = len(solution)
 
     sequence = copy.deepcopy(solution)
 
@@ -100,9 +101,9 @@ def create_neighbor_solution(solution):
         sequence[max_length_index].pop(rand)
 
     else:
-
-        m1 = random.randint(0, 2)
-        m2 = random.randint(0, 2)
+        # modified randoms, debug if necessary
+        m1 = random.randint(0, n_machines-1)
+        m2 = random.randint(0, n_machines-1)
         dec = random.random()
 
         if dec >= 0.5:
