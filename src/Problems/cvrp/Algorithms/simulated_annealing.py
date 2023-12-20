@@ -2,8 +2,7 @@ from src.Problems.cvrp.cvrp import CapacitatedVehicleRouting
 from src.Problems.cvrp.Algorithms.utils import (
     calculate_total_cost,
     create_initial_solution,
-    create_neighbor_solution
-)
+    create_neighbor_solution)
 import copy
 import random
 import math
@@ -18,7 +17,7 @@ class SimulatedAnnealing(CapacitatedVehicleRouting):
         self.initial_solution = create_initial_solution(
             self.distance_matrix, self.demands, self.vehicle_capacities)
 
-    def solve(self, n_iter=1000, initial_temperature=100, cooling_factor=0.95):
+    def solve(self, n_iter=100, initial_temperature=100, cooling_factor=0.95):
 
         temperature = initial_temperature
         objectives = []
@@ -33,10 +32,10 @@ class SimulatedAnnealing(CapacitatedVehicleRouting):
             new_sol = create_neighbor_solution(incumbent_solution)
 
             # Energy of current solution
-            incumbent_obj, _ = calculate_total_cost(
+            incumbent_obj, _, _ = calculate_total_cost(
                 incumbent_solution, self.distance_matrix, self.demands, self.vehicle_capacities)
             # Energy of candidate solution
-            new_obj, _ = calculate_total_cost(
+            new_obj, _, _ = calculate_total_cost(
                 new_sol, self.distance_matrix, self.demands, self.vehicle_capacities)
 
             delta_e = new_obj - incumbent_obj

@@ -1,5 +1,6 @@
 import random
 import copy
+import numpy as np
 
 
 def calculate_total_cost(solution, distances, demands, vehicle_capacities):
@@ -44,15 +45,14 @@ def calculate_total_cost(solution, distances, demands, vehicle_capacities):
 
     return total_cost, total_loads,copy.deepcopy(solution)
 
-
 def create_initial_solution(distances, demands, vehicle_capacities):
 
     n_nodes = len(distances)
     n_vehicles = len(vehicle_capacities)
 
-    # list composed of customer nodes
-    customers = list(range(1, n_nodes))
-    random.shuffle(customers)
+    # array composed of customer nodes
+    customers = np.arange(1, n_nodes)
+    np.random.shuffle(customers)
 
     solution = [[] for _ in range(n_vehicles)]
 
@@ -60,13 +60,12 @@ def create_initial_solution(distances, demands, vehicle_capacities):
 
     for customer in customers:
 
-        max_index = remaining_capacity.index(max(remaining_capacity))
+        max_index = np.argmax(remaining_capacity)
 
-        solution[max_index].append(customer)
+        solution[max_index].append(int(customer))
         remaining_capacity[max_index] -= demands[customer]
 
     return solution
-
 
 
 
