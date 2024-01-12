@@ -112,3 +112,24 @@ def create_neighbor_solution(solution):
             sequence[m2].append(element)
 
     return sequence
+
+
+def find_value_index(my_list, value):
+    for i, sublist in enumerate(my_list):
+        if value in sublist:
+            j = sublist.index(value)
+            return (i, j)
+      
+    print(f"Value {value} is not inside the list!!")
+    return None
+
+
+
+def create_init_population(distances, demands, vehicle_capacities, size=100):
+    population = []
+
+    while size > 0:
+        population.append(create_initial_solution(distances, demands, vehicle_capacities))
+        size -= 1
+
+    return population

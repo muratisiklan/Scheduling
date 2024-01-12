@@ -1,24 +1,24 @@
-from src.Problems.pms.pms import ParallelMachineScheduling
-from src.Problems.pms.Algorithms.utils import (calculate_tardiness,
-                                               create_population,
-                                               find_value_index,
-                                               create_neighbor_solution)
-import random
+from src.Problems.cvrp.cvrp import CapacitatedVehicleRouting
+from src.Problems.cvrp.Algorithms.utils import (calculate_total_cost,
+                                                find_value_index,
+                                                create_neighbor_solution,
+                                                create_init_population)
 import copy
+import random
 
 
-class GeneticAlgorithm(ParallelMachineScheduling):
-    def __init__(self, process_times, ready_times, due_dates, setup_times) -> None:
-        super().__init__(process_times, ready_times, due_dates, setup_times)
+class GeneticAlgorithm(CapacitatedVehicleRouting):
+    def __init__(self, distance_matrix, demands, vehicle_capacities) -> None:
+        super().__init__(distance_matrix, demands, vehicle_capacities)
 
     def _eval_fitness(self):
         fitness: list = []
         for i in range(len(self.population)):
-            fitness.append(calculate_tardiness(
-                self.population[i], self.process_times, self.due_dates, self.ready_times, self.setup_times)[0])
+            fitness.append(calculate_total_cost(
+                self.population[i], self.distance_matrix, self.demands, self.vehicle_capacities)[0])
 
         return fitness
-
+    
     def _selection(self, fitness: list, selection_algorithm: str = None):
         # Roulette wheel selection
 
@@ -26,10 +26,7 @@ class GeneticAlgorithm(ParallelMachineScheduling):
         sorted_indexes = sorted(
             range(len(fitness)), key=lambda k: fitness[k])
         return tuple(sorted_indexes[:2])
-     
-
-        # Tournament selection
-        # Boltzman Selectiong
+    
     @staticmethod
     def _crossover(parent1, parent2):
         # Interesting crossover methodology?
@@ -48,7 +45,7 @@ class GeneticAlgorithm(ParallelMachineScheduling):
             p2[row1].insert(column1, i)
 
         return p2
-
+    
     def generate_population(self, parent1, parent2, population_size, mutation_prob):
         population = []
         while population_size > 0:
@@ -61,22 +58,23 @@ class GeneticAlgorithm(ParallelMachineScheduling):
 
             population_size -= 1
         return population
+     
 
     def solve(self, n_iter=100, generation_size=100, mutation_prob=1):
-        self.population = create_population(
-            self.process_times, generation_size)
+        self.population = create_init_population(self.distance_matrix,self.demands,self.vehicle_capacities, generation_size)
         global_best_solution = self.population[0]
-        global_best_obj = calculate_tardiness(
-            global_best_solution, self.process_times, self.due_dates, self.ready_times, self.setup_times)[0]
+        global_best_obj = calculate_total_cost(
+            global_best_solution, self.distance_matrix, self.demands, self.vehicle_capacities)[0]
 
         objectives = []
         while n_iter > 0:
             fitness = self._eval_fitness()
             p1_idx,p2_idx = self._selection(fitness)
+            
             parent1 = self.population[p1_idx]
             parent2 = self.population[p2_idx]
-            candidate_solution_obj = calculate_tardiness(
-                parent1, self.process_times, self.due_dates, self.ready_times, self.setup_times)[0]
+            candidate_solution_obj = calculate_total_cost(
+                parent1, self.distance_matrix, self.demands, self.vehicle_capacities)[0]
             if candidate_solution_obj < global_best_obj:
                 global_best_solution = copy.deepcopy(parent1)
                 global_best_obj = candidate_solution_obj
@@ -85,13 +83,12 @@ class GeneticAlgorithm(ParallelMachineScheduling):
             objectives.append(global_best_obj)
             n_iter -= 1
 
-        obj, seq, compt, stime = calculate_tardiness(
-            global_best_solution, self.process_times, self.due_dates, self.ready_times, self.setup_times)
+        # obj, load_each_vehicle, final_sol = calculate_total_cost(
+        #     global_best_solution, self.distance_matrix, self.demands, self.vehicle_capacities)
 
-        self.final_solution = seq
-        self.final_total_objective_value = obj
-        self.objective_change_iteration = objectives
-        self.final_compt = compt
-        self.final_stime = stime
+        # self.final_solution = final_sol
+        # self.final_total_objective_value = obj
+        # self.objective_change_iteration = objectives
+        # self.vehicle_loads = load_each_vehicle
 
-        return seq, obj, objectives, compt, stime
+        # return final_sol, obj, objectives, load_each_vehicle

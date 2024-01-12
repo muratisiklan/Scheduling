@@ -61,4 +61,4 @@ class SimulatedAnnealing(CapacitatedVehicleRouting):
         self.objective_change_iteration = objectives
         self.vehicle_loads = loads
 
-        return final_solution, obj, loads, objectives
+        return final_solution, obj, objectives,loads
