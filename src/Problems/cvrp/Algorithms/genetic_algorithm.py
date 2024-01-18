@@ -39,9 +39,9 @@ class GeneticAlgorithm(CapacitatedVehicleRouting):
         num_nodes_inserted = random.randint(1, n_nodes - 1)
         nodes_to_inserted = random.sample(
             range(1, n_nodes), num_nodes_inserted)
-        print(nodes_to_inserted)
-        print("----------------")
-        print(p1)
+        # print(nodes_to_inserted)
+        # print("----------------")
+        # print(p1)
         for i in nodes_to_inserted:
             row1, column1 = find_value_index(p1, i)
             row2, column2 = find_value_index(p2, i)
